@@ -9,12 +9,20 @@ async function add() {
    
 	const textboxContent = textbox.value.trim();
 
+	//between 5 and 50 characters
 	if (textboxContent.length < 5 || textboxContent.length > 50) {
 		alert("Message must be between 5 and 50 characters.");
 		return;
 	}
 
-	const username = localStorage.getItem("username") || "anon";
+	//something
+	const { data: { user } } = await supabase.auth.getUser();
+	if (!user) {
+		alert("Please sign in to send a message.");
+		return;
+	}
+
+	const username = user.user_metadata?.full_name || "anon";
 
 	const { error } = await supabase.from("messages").insert([
 		{
@@ -29,7 +37,6 @@ async function add() {
 		return;
 	}
 
-    if (!textboxContent) return;
 	const message = document.createElement("div");
     message.classList.add("message");
     message.textContent = textboxContent;
@@ -46,6 +53,7 @@ async function loadMessages() {
 		.limit(100);
 
 	if (error) {
+		alert("Could not load messages. Try again later.");
 		console.error("Error fetching messages:", error);
 		return;
 	}
@@ -54,7 +62,7 @@ async function loadMessages() {
 		const message = document.createElement("div");
 		message.classList.add("message");
 
-		if (msg.username === localStorage.getItem("username")) {
+		if (msg.username === user?.user_metadata?.full_name) {
 			message.style.backgroundColor = "#ddf"; // Own messages different color
 		}
 

@@ -22,7 +22,7 @@ html, body {
     padding: 50px;
     padding-top: 70px;
     font-size: 60px;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
     letter-spacing: 0.5em;
 }
 
@@ -32,7 +32,7 @@ html, body {
     color: white;
     text-align: center;
     padding: 20px;
-    padding-top: 0px;
+    padding-top: 8px;
     font-size: 20px;
     letter-spacing: 0.2em;
     padding-bottom: 60px;
@@ -83,6 +83,34 @@ html, body {
 #sendbutton {
     background-color: #add;
     font-size: 28px;
+}
+
+#auth {
+    display: flex;
+    justify-content: center; /* Centers the button horizontally */
+    align-items: center;
+    margin-top: 20px; /* Adds some space above the button */
+}
+
+/* Optional: Add a subtle shadow or border to the button's container */
+#login {
+	border-color: white;
+    border-radius: 10px;
+    padding: 5px; /* Adjust padding as needed */
+	background-color: #fff;
+	color: #426;
+	font-size: 20px;
+	font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+#logout {
+    border-color: white;
+    border-radius: 10px;
+    padding: 5px; /* Adjust padding as needed */
+	background-color: #fff;
+	color: #426;
+	font-size: 20px;
+	font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
 
 @media (max-width: 600px) {
