@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./styles/main.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+    <main id="background">
+    <h1 id="title">ECHOES</h1>
+    <h2 id="subtitle">Write something beautiful. Let it drift away.</h2>
+	<div id="auth">
+  		<button id="login">Sign in with Google</button>
+		<button id="logout" style="display:none">Log out</button>
+	</div>
+    <div id="portal" style="display: none;"> 
+        <div id="viewport">
+            <p class="message">hello from greece 🌊</p>
+        </div>
+        <div id="textport">
+            <input id="textbox" type="text" placeholder="hello website users!!">
+            <button id="sendbutton" onClick=add()> ➤ </button>
+        </div>
+    </div>
+	</main>
+    <script type="module" src="./js/messages.js"></script>
+	<script type="module" src="./js/auth.js"></script>
+</body>
+
+</html>

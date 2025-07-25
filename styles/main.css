@@ -1,0 +1,92 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#background {
+    background-image: linear-gradient(to top, #a9e, #214);
+	height: 1200px;
+}
+
+#title {
+    font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+    color: white;
+    text-align: center;
+    padding: 50px;
+    padding-top: 70px;
+    font-size: 60px;
+    padding-bottom: 10px;
+    letter-spacing: 0.5em;
+}
+
+#subtitle {
+    font-family: Helvetica;
+    font-style: italic;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    padding-top: 0px;
+    font-size: 20px;
+    letter-spacing: 0.2em;
+    padding-bottom: 60px;
+    font-weight: 300;
+}
+
+.message {
+  margin: 0.5rem 0.5rem; 
+  padding: 0.5rem 1rem;
+  background: #fff;
+  border-radius: 100px;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 16px;
+}
+
+#portal {
+  background-color: #113;
+  height: 80vh;              
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 70%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+#viewport {
+  overflow-y: auto;
+  flex: 1;                    
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+}
+
+#textport {
+  display: flex;
+  gap: 1rem;
+  border: 1px solid #ccc;
+  padding: 1rem;
+}
+
+#textbox {
+    font-size: 18px;
+    width: 650px;
+}
+
+#sendbutton {
+    background-color: #add;
+    font-size: 28px;
+}
+
+@media (max-width: 600px) {
+  #portal {
+    width: 90%;
+  }
+}
