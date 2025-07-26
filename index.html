@@ -20,15 +20,15 @@
         </div>
         <div id="textport">
             <input id="textbox" type="text" placeholder="hello website users!!">
-            <button id="sendbutton" onClick=add()> ➤ </button>
+            <button id="sendbutton"> ➤ </button>
         </div>
     </div>
 	<div id="auth">
-  		<button id="login">Sign in with Google</button>
-		<button id="logout" style="display:none">Log out</button>
+  		<button id="login" onclick="supabase.auth.signInWithOAuth({ provider: 'google' })" >Sign in with Google</button>
+		<button id="logout" onclick="supabase.auth.signOut()" style="display:none">Log out</button>
 	</div>
 	</main>
-    <script type="module" src="./js/messages.js"></script>
+    <script type="module" src="./js/messages2.js"></script>
 	<script type="module" src="./js/auth.js"></script>
 </body>
 
