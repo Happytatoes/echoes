@@ -11,7 +11,7 @@ html, body {
 }
 
 #background {
-    background-image: linear-gradient(to top, #a9e, #214);
+    background-image: linear-gradient(to top, rgb(142, 236, 255), rgb(0, 64, 136));
 	height: 1200px;
 }
 
