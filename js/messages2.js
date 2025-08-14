@@ -117,6 +117,8 @@ function displayMessage(msg) {
 
   message.textContent = `${msg.username}: ${msg.content}`;
   container.appendChild(message);
+
+  container.scrollTop = container.scrollHeight;
 }
 
 // UI toggle login/logout
