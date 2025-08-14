@@ -141,7 +141,7 @@ function updateUI() {
   const loginBtn = document.getElementById("login");
   const logoutBtn = document.getElementById("logout");
   const app = document.getElementById("portal");
-
+  cleanupOldMessages();
   if (currentUser) {
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline-block";
