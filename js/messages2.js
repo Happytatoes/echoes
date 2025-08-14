@@ -121,6 +121,21 @@ function displayMessage(msg) {
   container.scrollTop = container.scrollHeight;
 }
 
+async function cleanupOldMessages() {
+  const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+  
+  const { error } = await supabase
+    .from("messages")
+    .delete()
+    .lt("created_at", twelveHoursAgo);
+
+  if (error) console.error("Cleanup error:", error);
+  else console.log("Old messages cleaned up!");
+}
+
+// Call it when user logs in or page loads
+cleanupOldMessages();
+
 // UI toggle login/logout
 function updateUI() {
   const loginBtn = document.getElementById("login");
