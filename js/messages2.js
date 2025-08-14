@@ -11,7 +11,25 @@ const container = document.getElementById("viewport");
 supabase.auth.onAuthStateChange(async (_event, session) => {
   currentUser = session?.user || null;
   updateUI();
-  if (currentUser) loadMessages();
+  if (currentUser) {
+    console.log("Logged in as:", currentUser.id);
+    loadMessages();
+
+    // Subscribe AFTER login
+    supabase
+      .channel('public:messages')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+      }, payload => {
+        console.log("New message payload:", payload);
+        displayMessage(payload.new);
+      })
+      .subscribe(status => {
+        console.log("Subscription status:", status);
+      });
+  }
 });
 
 // Manual session check on page load
@@ -64,6 +82,7 @@ supabase
     table: 'messages',
   }, payload => {
     displayMessage(payload.new);
+    console.log("payload new message:", payload);
   })
   .subscribe();
 
