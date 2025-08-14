@@ -62,9 +62,12 @@ html, body {
 }
 
 #viewport {
-  overflow-y: auto;
-  flex: 1;                    
-  margin-bottom: 1rem;
+  height: 80vh;            /* fixed height */
+  overflow-y: auto;        /* scroll when content overflows */
+  display: flex;
+  flex-direction: column;  /* stack messages vertically */
+  gap: 0.5rem;             /* optional spacing between messages */
+  padding: 1rem;
   border: 1px solid #ccc;
 }
 
