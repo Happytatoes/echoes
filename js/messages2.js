@@ -102,6 +102,7 @@ async function add() {
 }
 
 // Realtime listener
+/*
 supabase
   .channel('public:messages')
   .on('postgres_changes', {
@@ -113,7 +114,7 @@ supabase
     console.log("payload new message:", payload);
   })
   .subscribe();
-
+*/
 // Load existing messages (last 12h)
 async function loadMessages() {
   container.innerHTML = "";
