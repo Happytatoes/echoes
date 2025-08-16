@@ -120,4 +120,7 @@ html, body {
   #portal {
     width: 90%;
   }
+  #title {
+    font-size: 40px;
+  }
 }
