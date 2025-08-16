@@ -17,7 +17,7 @@ async function ensureUsername(user) {
 
   // If the user doesn't exist, create them
   if (!userRow) {
-    const username = prompt("Pick a username (will appear next to your posts):");
+    const username = prompt("Pick a username:") || "unlogged-user";
     const { error: insertError } = await supabase.from("users").insert({
       id: user.id,
       username,
@@ -32,6 +32,17 @@ async function ensureUsername(user) {
     currentUser.user_metadata = currentUser.user_metadata || {};
     currentUser.user_metadata.custom_username = userRow.username;
   }
+}
+
+function subscribeToMessages() {
+  supabase
+    .channel('public:messages')
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'messages',
+    }, payload => displayMessage(payload.new))
+    .subscribe();
 }
 
 // Auth state listener
@@ -49,8 +60,12 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
 document.addEventListener("DOMContentLoaded", async () => {
   const { data: { user } } = await supabase.auth.getUser();
   currentUser = user;
-  updateUI();
-  if (currentUser) loadMessages();
+  if (currentUser) {
+    await ensureUsername(currentUser); // Make sure username is loaded
+    loadMessages();
+    subscribeToMessages();
+  }
+  updateUI(); // Now update UI with proper user state
 });
 
 // Send message
@@ -68,9 +83,7 @@ async function add() {
   }
 
   const user_id = currentUser.id;
-  const username = prompt("Pick a username (will appear next to your posts):");
-  await supabase.from("users").upsert({ id: user.id, username });
-  username = currentUser.user_metadata?.custom_username || "user19823745817903874";
+  const username = currentUser.user_metadata?.custom_username || "unlogged-user";
 
   const { error } = await supabase.from("messages").insert({
     content,
@@ -156,7 +169,6 @@ function updateUI() {
   const loginBtn = document.getElementById("login");
   const logoutBtn = document.getElementById("logout");
   const app = document.getElementById("portal");
-  cleanupOldMessages();
   if (currentUser) {
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline-block";
