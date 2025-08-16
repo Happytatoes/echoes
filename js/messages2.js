@@ -55,7 +55,7 @@ async function add() {
   }
 
   const user_id = currentUser.id;
-  const username = currentUser.user_metadata?.full_name || currentUser.email || "anon";
+  const username = currentUser.user_metadata?.custom_username || "user19823745817903874";
 
   const { error } = await supabase.from("messages").insert({
     content,

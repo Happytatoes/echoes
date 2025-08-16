@@ -20,19 +20,35 @@ logoutBtn.addEventListener("click", async () => {
 // Check session on load
 checkLogin();
 
+async function storeUsername(session) {
+  const user_id = session.user.id;
+  let username = localStorage.getItem("username");
+
+  if (!username) {
+    username = prompt("Pick a username (this will show next to your posts):");
+    localStorage.setItem("username", username);
+  }
+
+  // Upsert the username into the users table
+  const { data, error } = await supabase
+    .from("users")
+    .upsert({ id: user_id, username: username })
+    .select();
+
+  if (error) {
+    console.error("Error storing username:", error);
+  } else {
+    console.log("Username stored/updated:", data);
+  }
+}
+
 async function checkLogin() {
   const {
     data: { session },
   } = await supabase.auth.getSession();
 
   if (session) {
-    const email = session.user.email;
-    let username = localStorage.getItem("username");
-
-    if (!username) {
-      username = prompt("Pick a username (this will show next to your posts):");
-      localStorage.setItem("username", username);
-    }
+    await storeUsername(session);  // <-- call your upsert logic here
 
     loginBtn.style.display = "none";
     logoutBtn.style.display = "inline-block";
