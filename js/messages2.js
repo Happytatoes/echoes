@@ -58,14 +58,19 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
 
 // Manual session check on page load
 document.addEventListener("DOMContentLoaded", async () => {
-  const { data: { user } } = await supabase.auth.getUser();
-  currentUser = user;
-  if (currentUser) {
-    await ensureUsername(currentUser); // Make sure username is loaded
-    loadMessages();
-    subscribeToMessages();
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    currentUser = user;
+    if (currentUser) {
+      await ensureUsername(currentUser);
+      loadMessages();
+      subscribeToMessages();
+    }
+  } catch (err) {
+    console.error("Error restoring session:", err);
+  } finally {
+    updateUI(); // always update UI, even if session fails
   }
-  updateUI(); // Now update UI with proper user state
 });
 
 // Send message
