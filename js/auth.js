@@ -23,11 +23,9 @@ checkLogin();
 async function storeUsername(session) {
   const user_id = session.user.id;
   let username = localStorage.getItem("username");
-
-  if (!username) {
-    username = prompt("Pick a username (this will show next to your posts):");
-    localStorage.setItem("username", username);
-  }
+  
+  username = prompt("Pick a username (this will show next to your posts):");
+  localStorage.setItem("username", username);
 
   // Upsert the username into the users table
   const { data, error } = await supabase

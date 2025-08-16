@@ -7,29 +7,42 @@ const textbox = document.getElementById('textbox');
 const button = document.getElementById('sendbutton');
 const container = document.getElementById("viewport");
 
+async function ensureUsername(user) {
+  // Get the user row from your users table
+  let { data: userRow, error } = await supabase
+    .from("users")
+    .select("username")
+    .eq("id", user.id)
+    .single();
+
+  // If the user doesn't exist, create them
+  if (!userRow) {
+    const username = prompt("Pick a username (will appear next to your posts):");
+    const { error: insertError } = await supabase.from("users").insert({
+      id: user.id,
+      username,
+    });
+    if (insertError) console.error("Failed to insert user:", insertError);
+
+    // Update user_metadata so currentUser always has it
+    currentUser.user_metadata = currentUser.user_metadata || {};
+    currentUser.user_metadata.custom_username = username;
+  } else {
+    // Load existing username into currentUser for seamless access
+    currentUser.user_metadata = currentUser.user_metadata || {};
+    currentUser.user_metadata.custom_username = userRow.username;
+  }
+}
+
 // Auth state listener
 supabase.auth.onAuthStateChange(async (_event, session) => {
   currentUser = session?.user || null;
-  updateUI();
   if (currentUser) {
-    console.log("Logged in as:", currentUser.id);
+    await ensureUsername(currentUser);
     loadMessages();
-
-    // Subscribe AFTER login
-    supabase
-      .channel('public:messages')
-      .on('postgres_changes', {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'messages',
-      }, payload => {
-        console.log("New message payload:", payload);
-        displayMessage(payload.new);
-      })
-      .subscribe(status => {
-        console.log("Subscription status:", status);
-      });
+    subscribeToMessages();
   }
+  updateUI();
 });
 
 // Manual session check on page load
@@ -55,7 +68,9 @@ async function add() {
   }
 
   const user_id = currentUser.id;
-  const username = currentUser.user_metadata?.custom_username || "user19823745817903874";
+  const username = prompt("Pick a username (will appear next to your posts):");
+  await supabase.from("users").upsert({ id: user.id, username });
+  username = currentUser.user_metadata?.custom_username || "user19823745817903874";
 
   const { error } = await supabase.from("messages").insert({
     content,
