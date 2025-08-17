@@ -46,12 +46,13 @@ function subscribeToMessages() {
 }
 
 // Auth state listener
+
 supabase.auth.onAuthStateChange(async (_event, session) => {
   currentUser = session?.user || null;
   if (currentUser) {
     await ensureUsername(currentUser);
-    loadMessages();
-    subscribeToMessages();
+    //loadMessages();
+    //subscribeToMessages();
   }
   updateUI();
 });
@@ -74,6 +75,7 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
 });
 */
 
+/* V1 HERE
 document.addEventListener("DOMContentLoaded", async () => {
   const { data: { user } } = await supabase.auth.getUser();
   currentUser = user;
@@ -84,6 +86,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     subscribeToMessages();
   }
 });
+*/
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  currentUser = user;
+  updateUI(); // show UI as logged in immediately
+  
+  loadMessages();
+  subscribeToMessages();
+  }
+);
 
 // Send message
 async function add() {
