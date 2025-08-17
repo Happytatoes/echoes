@@ -57,7 +57,7 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
 });
 
 // Manual session check on page load
-document.addEventListener("DOMContentLoaded", async () => {
+/*document.addEventListener("DOMContentLoaded", async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     currentUser = user;
@@ -70,6 +70,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error restoring session:", err);
   } finally {
     updateUI(); // always update UI, even if session fails
+  }
+});
+*/
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  currentUser = user;
+  updateUI(); // show UI as logged in immediately
+  if (currentUser) {
+    await ensureUsername(currentUser); // can prompt, DB call etc
+    loadMessages();
+    subscribeToMessages();
   }
 });
 
