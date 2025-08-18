@@ -48,7 +48,7 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
   if (currentUser) {
     await ensureUsername(currentUser);
     subscribeToMessages();
-	updateUI();
+	//updateUI();
   } else {
     if (channel) {
       channel.unsubscribe();
@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await ensureUsername(currentUser);
     loadMessages();
     subscribeToMessages();
+	updateUI();
   }
 
   //updateUI();
