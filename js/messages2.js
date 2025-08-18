@@ -49,11 +49,11 @@ function subscribeToMessages() {
 
 supabase.auth.onAuthStateChange(async (_event, session) => {
   currentUser = session?.user || null;
-  if (currentUser) {
-    await ensureUsername(currentUser);
+  //if (currentUser) {
+    //await ensureUsername(currentUser);
     //loadMessages();
     //subscribeToMessages();
-  }
+  //}
   updateUI();
 });
 
@@ -92,7 +92,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { data: { user } } = await supabase.auth.getUser();
   currentUser = user;
   updateUI(); // show UI as logged in immediately
-  
   loadMessages();
   subscribeToMessages();
   }
