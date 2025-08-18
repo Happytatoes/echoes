@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 	signedinUI();
   }
   else if(!currentUser) {
-	signedoutUI();
+	//signedoutUI();
   }
  
 });
