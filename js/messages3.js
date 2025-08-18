@@ -16,7 +16,7 @@ async function ensureUsername(user) {
     .single();
 
   if (!userRow) {
-    const username = prompt("Pick a username:") || "anon-user";
+    const username = prompt("Pick a username:") || "user";
     const { error } = await supabase.from("users").insert({
       id: user.id,
       username,
@@ -66,6 +66,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   // restore session on first load
   const { data: { session } } = await supabase.auth.getSession();
   currentUser = session?.user || null;
+	
+	updateUI();
 
   if (currentUser) {
     await ensureUsername(currentUser);
@@ -73,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     subscribeToMessages();
   }
 
-  updateUI();
+ ;
 });
 
 async function add() {
