@@ -27,7 +27,6 @@ async function ensureUsername(user) {
   } else {
     currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: userRow.username };
   }
-  updateUI(); //newA
 }
 
 function subscribeToMessages() {
@@ -48,10 +47,8 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
 
   if (currentUser) {
     await ensureUsername(currentUser);
-    //loadMessages();
     subscribeToMessages();
   } else {
-    // logged out → clean
     if (channel) {
       channel.unsubscribe();
       channel = null;
@@ -67,8 +64,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // restore session on first load
   const { data: { session } } = await supabase.auth.getSession();
   currentUser = session?.user || null;
-	
-  updateUI(); //newA
 
   if (currentUser) {
     await ensureUsername(currentUser);
@@ -76,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     subscribeToMessages();
   }
 
-  updateUI();
+  //updateUI();
  
 });
 
