@@ -1,0 +1,150 @@
+import { supabase } from './supabaseClient.js';
+
+let currentUser = null;
+let subscribed = false;
+let channel = null;
+
+const textbox = document.getElementById('textbox');
+const button = document.getElementById('sendbutton');
+const container = document.getElementById("viewport");
+
+async function ensureUsername(user) {
+  const { data: userRow } = await supabase
+    .from("users")
+    .select("username")
+    .eq("id", user.id)
+    .single();
+
+  if (!userRow) {
+    const username = prompt("Pick a username:") || "anon-user";
+    const { error } = await supabase.from("users").insert({
+      id: user.id,
+      username,
+    });
+    if (error) console.error("Insert user failed:", error);
+
+    currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: username };
+  } else {
+    currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: userRow.username };
+  }
+}
+
+function subscribeToMessages() {
+  if (subscribed) return;
+  channel = supabase
+    .channel('public:messages')
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'messages',
+    }, payload => displayMessage(payload.new))
+    .subscribe();
+  subscribed = true;
+}
+
+supabase.auth.onAuthStateChange(async (_event, session) => {
+  currentUser = session?.user || null;
+
+  if (currentUser) {
+    await ensureUsername(currentUser);
+    loadMessages();
+    subscribeToMessages();
+  } else {
+    // logged out → clean
+    if (channel) {
+      channel.unsubscribe();
+      channel = null;
+      subscribed = false;
+    }
+    container.innerHTML = "";
+  }
+
+  updateUI();
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  // restore session on first load
+  const { data: { session } } = await supabase.auth.getSession();
+  currentUser = session?.user || null;
+
+  if (currentUser) {
+    await ensureUsername(currentUser);
+    loadMessages();
+    subscribeToMessages();
+  }
+
+  updateUI();
+});
+
+async function add() {
+  const content = textbox.value.trim();
+  if (content.length < 5 || content.length > 50) {
+    alert("Message must be between 5 and 50 characters.");
+    return;
+  }
+  if (!currentUser) {
+    alert("Please sign in.");
+    return;
+  }
+
+  const { error } = await supabase.from("messages").insert({
+    content,
+    user_id: currentUser.id,
+    username: currentUser.user_metadata?.custom_username || "anon-user"
+  });
+
+  if (error) console.error("Insert failed:", error);
+  textbox.value = "";
+}
+
+async function loadMessages() {
+  container.innerHTML = "";
+  const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*")
+    .gte("created_at", twelveHoursAgo)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Load error:", error);
+    return;
+  }
+
+  data.forEach(displayMessage);
+}
+
+function displayMessage(msg) {
+  const message = document.createElement("div");
+  message.classList.add("message");
+  if (msg.user_id === currentUser?.id) {
+    message.style.backgroundColor = "#ddf";
+  }
+  message.textContent = `${msg.username}: ${msg.content}`;
+  container.appendChild(message);
+  container.scrollTop = container.scrollHeight;
+}
+
+function updateUI() {
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const app = document.getElementById("portal");
+
+  if (currentUser) {
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    app.style.display = "block";
+  } else {
+    loginBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    app.style.display = "none";
+  }
+}
+
+textbox.addEventListener("keypress", e => {
+  if (e.key === "Enter") add();
+});
+button.addEventListener("click", add);
+
+cleanupOldMessages();

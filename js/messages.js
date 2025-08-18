@@ -1,3 +1,5 @@
+/*
+
 import { supabase } from './supabaseClient.js';
 
 const { data: { user } } = await supabase.auth.getUser();
@@ -154,3 +156,4 @@ const { data, error } = await supabase
 	.gte("created_at", twelveHoursAgo)
 	.order("created_at", { ascending: false });
 */
+

@@ -12,6 +12,6 @@ loginBtn.addEventListener("click", async () => {
 });
 
 logoutBtn.addEventListener("click", async () => {
-  await supabase.auth.signOut();
-  window.location.reload();
+  const { error } = await supabase.auth.signOut();
+  if (error) console.error("Logout error:", error);
 });
