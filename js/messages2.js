@@ -1,6 +1,8 @@
 import { supabase } from './supabaseClient.js';
 
 let currentUser = null;
+let subscribed = false;
+let channel = null;
 
 // DOM elements
 const textbox = document.getElementById('textbox');
@@ -35,7 +37,8 @@ async function ensureUsername(user) {
 }
 
 function subscribeToMessages() {
-  supabase
+  if (subscribed) return;
+  channel = supabase
     .channel('public:messages')
     .on('postgres_changes', {
       event: 'INSERT',
@@ -43,10 +46,31 @@ function subscribeToMessages() {
       table: 'messages',
     }, payload => displayMessage(payload.new))
     .subscribe();
+    subscribed = true;
 }
 
 // Auth state listener
+supabase.auth.onAuthStateChange(async (_event, session) => {
+  currentUser = session?.user || null;
+  updateUI();
 
+  if (currentUser) {
+    await ensureUsername(currentUser);
+    loadMessages();
+    subscribeToMessages();
+  } else {
+    // User logged out: clean up
+    if (channel) {
+      channel.unsubscribe();
+      channel = null;
+      subscribed = false;
+    }
+    container.innerHTML = ""; // clear messages
+  }
+});
+
+
+/* V1 HERE
 supabase.auth.onAuthStateChange(async (_event, session) => {
   currentUser = session?.user || null;
   //if (currentUser) {
@@ -55,7 +79,7 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
     //subscribeToMessages();
   //}
   updateUI();
-});
+});*/
 
 // Manual session check on page load
 /*document.addEventListener("DOMContentLoaded", async () => {
@@ -88,6 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 */
 
+/* V2 HERE
 document.addEventListener("DOMContentLoaded", async () => {
   const { data: { user } } = await supabase.auth.getUser();
   currentUser = user;
@@ -96,6 +121,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   subscribeToMessages();
   }
 );
+*/
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const { data: { session }, error } = await supabase.auth.getSession();
+  currentUser = session?.user || null;
+  updateUI();
+
+  if (currentUser) {
+    await ensureUsername(currentUser);
+    loadMessages();
+    subscribeToMessages();
+  }
+});
 
 // Send message
 async function add() {
