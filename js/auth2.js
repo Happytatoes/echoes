@@ -1,3 +1,4 @@
+/*
 import { supabase } from './supabaseClient.js';
 
 const loginBtn = document.getElementById("login");
@@ -57,3 +58,4 @@ async function checkLogin() {
 	document.body.classList.remove("logged-in");
   }
 }
+*/
