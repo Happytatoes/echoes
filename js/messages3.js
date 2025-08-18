@@ -48,17 +48,17 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
   if (currentUser) {
     await ensureUsername(currentUser);
     subscribeToMessages();
-	//updateUI();
+	signedinUI();
   } else {
     if (channel) {
       channel.unsubscribe();
       channel = null;
       subscribed = false;
+	  signedoutUI();
     }
     container.innerHTML = "";
   }
 
-  //updateUI();
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -70,10 +70,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     await ensureUsername(currentUser);
     loadMessages();
     subscribeToMessages();
-	updateUI();
+	signedinUI();
   }
-
-  //updateUI();
+  else if(!currentUser) {
+	signedoutUI();
+  }
  
 });
 
@@ -127,6 +128,35 @@ function displayMessage(msg) {
   container.scrollTop = container.scrollHeight;
 }
 
+function signedinUI() {
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const app = document.getElementById("portal");
+  
+  loginBtn.style.display = "none";
+  logoutBtn.style.display = "inline-block";
+  app.style.display = "block";
+}
+
+function signedoutUI() {
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const app = document.getElementById("portal");
+
+  loginBtn.style.display = "inline-block";
+  logoutBtn.style.display = "none";
+  app.style.display = "none";
+}
+
+
+textbox.addEventListener("keypress", e => {
+  if (e.key === "Enter") add();
+});
+button.addEventListener("click", add);
+
+cleanupOldMessages();
+
+/*
 function updateUI() {
   const loginBtn = document.getElementById("login");
   const logoutBtn = document.getElementById("logout");
@@ -137,15 +167,9 @@ function updateUI() {
     logoutBtn.style.display = "inline-block";
     app.style.display = "block";
   } else {
-    loginBtn.style.display = "inline-block";
+    loginBtn.style.display = "inline-block";   
     logoutBtn.style.display = "none";
-    app.style.display = "none";
+    app.style.display = "none";                
   }
 }
-
-textbox.addEventListener("keypress", e => {
-  if (e.key === "Enter") add();
-});
-button.addEventListener("click", add);
-
-cleanupOldMessages();
+*/
