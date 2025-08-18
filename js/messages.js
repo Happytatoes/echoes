@@ -1,159 +1,181 @@
-/*
-
 import { supabase } from './supabaseClient.js';
 
-const { data: { user } } = await supabase.auth.getUser();
 let currentUser = null;
-supabase.auth.getUser().then(({ data }) => {
-	currentUser = data.user;
-});
+let subscribed = false;
+let channel = null;
 
-//all stuff for adding
-const textbox = document.getElementById('textbox'); 
+const textbox = document.getElementById('textbox');
 const button = document.getElementById('sendbutton');
 const container = document.getElementById("viewport");
 
-async function add() {
-	const textboxContent = textbox.value.trim();
+async function ensureUsername(user) {
+  const { data: userRow } = await supabase
+    .from("users")
+    .select("username")
+    .eq("id", user.id)
+    .single();
 
-	if (textboxContent.length < 5 || textboxContent.length > 50) {
-		alert("Message must be between 5 and 50 characters.");
-		return;
-	}
+  if (!userRow) {
+    const username = prompt("Pick a username:") || "user";
+    const { error } = await supabase.from("users").insert({
+      id: user.id,
+      username,
+    });
+    if (error) console.error("Insert user failed:", error);
 
-	const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-	if (userError || !user) {
-		alert("Please sign in to send a message.");
-		console.error("User error:", userError);
-		return;
-	}
-
-	const user_id = user.id;
-
-	const { error } = await supabase.from("messages").insert({
-		content: textboxContent,
-		username: username
-	});
-
-	if (error) {
-		alert("Failed to send message.");
-		console.error("Supabase insert error:", error.message);
-		return;
-	}
-
-	alert("Message sent!");
-	textbox.value = "";
-}
-
-// load messages 
-async function loadMessages() {
-	const { data, error } = await supabase
-		.from("messages")
-		.select("*")
-		.order("created_at", { ascending: false })
-		.limit(100);
-
-	if (error) {
-		alert("Could not load messages. Try again later.");
-		console.error("Error fetching messages:", error);
-		return;
-	}
-
-	data.reverse().forEach(msg => {
-		const message = document.createElement("div");
-		message.classList.add("message");
-
-		if (msg.username === user?.user_metadata?.full_name) {
-			message.style.backgroundColor = "#ddf"; // Own messages different color
-		}
-
-		message.textContent = msg.content;
-		container.appendChild(message);
-	});
-}
-
-//times stuff
-const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
-
-//login 
-const loginButton = document.getElementById("login");
-const logoutButton = document.getElementById("logout");
-const appContainer = document.getElementById("portal");
-
-supabase.auth.onAuthStateChange(async (event, session) => {
-  if (session) {
-    loginButton.style.display = "none";
-    logoutButton.style.display = "inline-block";
-    appContainer.style.display = "block";
+    currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: username };
   } else {
-    loginButton.style.display = "inline-block";
-    logoutButton.style.display = "none";
-    appContainer.style.display = "none";
+    currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: userRow.username };
+  }
+}
+
+function subscribeToMessages() {
+  if (subscribed) return;
+  channel = supabase
+    .channel('public:messages')
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'messages',
+    }, payload => displayMessage(payload.new))
+    .subscribe();
+  subscribed = true;
+}
+
+async function getCurrentUser() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) {
+    console.error("Session fetch failed:", error);
+    return null;
+  }
+  return data.session?.user || null;
+}
+
+supabase.auth.onAuthStateChange((_event, session) => {
+  currentUser = session?.user || null;
+  if (currentUser) {
+    signedinUI();
+  } else {
+	if (channel) {
+      channel.unsubscribe();
+      channel = null;
+      subscribed = false;
+    }
+    signedoutUI();
   }
 });
 
 
-//event listeners
-document.addEventListener("DOMContentLoaded", loadMessages);
+document.addEventListener("DOMContentLoaded", async () => {
+  // Block until session result is known
+  currentUser = await getCurrentUser();
 
-textbox.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-        add();
-    }
+  if (currentUser) {
+    await ensureUsername(currentUser);
+    loadMessages();
+    subscribeToMessages();
+    signedinUI();
+  } else {
+    signedoutUI();
+  }
 });
 
+
+async function add() {
+  const content = textbox.value.trim();
+  if (content.length < 5 || content.length > 50) {
+    alert("Message must be between 5 and 50 characters.");
+    return;
+  }
+  if (!currentUser) {
+    alert("Please sign in.");
+    return;
+  }
+
+  const { error } = await supabase.from("messages").insert({
+    content,
+    user_id: currentUser.id,
+    username: currentUser.user_metadata?.custom_username || "anon-user"
+  });
+
+  if (error) console.error("Insert failed:", error);
+  textbox.value = "";
+}
+
+async function loadMessages() {
+  container.innerHTML = "";
+  const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from("messages")
+    .select("*")
+    .gte("created_at", twelveHoursAgo)
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    console.error("Load error:", error);
+    return;
+  }
+
+  data.forEach(displayMessage);
+}
+
+function displayMessage(msg) {
+  const message = document.createElement("div");
+  message.classList.add("message");
+  if (msg.user_id === currentUser?.id) {
+    message.style.backgroundColor = "#ddf";
+  }
+  message.textContent = `${msg.username}: ${msg.content}`;
+  container.appendChild(message);
+  container.scrollTop = container.scrollHeight;
+}
+
+function signedinUI() {
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const app = document.getElementById("portal");
+  
+  loginBtn.style.display = "none";
+  logoutBtn.style.display = "inline-block";
+  app.style.display = "block";
+}
+
+function signedoutUI() {
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const app = document.getElementById("portal");
+
+  loginBtn.style.display = "inline-block";
+  logoutBtn.style.display = "none";
+  app.style.display = "none";
+}
+
+function loadingUI() {
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const app = document.getElementById("portal");
+
+  loginBtn.style.display = "none";
+  logoutBtn.style.display = "none";
+  app.style.display = "none";
+}
+
+async function cleanupOldMessages() {
+  const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+  
+  const { error } = await supabase
+    .from("messages")
+    .delete()
+    .lt("created_at", twelveHoursAgo);
+
+  if (error) console.error("Cleanup error:", error);
+  //else console.log("Old messages cleaned up!");
+}
+
+textbox.addEventListener("keypress", e => {
+  if (e.key === "Enter") add();
+});
 button.addEventListener("click", add);
 
-
-
-/*
-async function add() {
-   
-	const textboxContent = textbox.value.trim();
-
-	//between 5 and 50 characters
-	if (textboxContent.length < 5 || textboxContent.length > 50) {
-		alert("Message must be between 5 and 50 characters.");
-		return;
-	}
-
-	//something
-	const { data: { user } } = await supabase.auth.getUser();
-	if (!user) {
-		alert("Please sign in to send a message.");
-		return;
-	}
-
-	const username = user.user_metadata?.full_name || "anon";
-
-	const { error } = await supabase.from("messages").insert([
-		{
-			content: textboxContent,
-			username: username,
-		}
-	]);
-
-	if (error) {
-		console.error("Supabase insert error:", error.message);
-		alert("Failed to send message.");
-		return;
-	}
-
-	const message = document.createElement("div");
-    message.classList.add("message");
-    message.textContent = textboxContent;
-	container.appendChild(message);
-    textbox.value = "";
-}
-*/
-
-
-/*
-const { data, error } = await supabase
-	.from("messages")
-	.select("*")
-	.gte("created_at", twelveHoursAgo)
-	.order("created_at", { ascending: false });
-*/
-
+cleanupOldMessages();

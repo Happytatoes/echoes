@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient.js';
+import { supabase } from '../supabaseClient.js';
 
 let currentUser = null;
 let subscribed = false;
