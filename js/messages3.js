@@ -56,10 +56,15 @@ supabase.auth.onAuthStateChange((_event, session) => {
   if (currentUser) {
     signedinUI();
   } else {
+	if (channel) {
+      channel.unsubscribe();
+      channel = null;
+      subscribed = false;
+    }
     signedoutUI();
   }
 });
-
+/* OLD
 supabase.auth.onAuthStateChange(async (_event, session) => {
   currentUser = session?.user || null;
 
@@ -78,6 +83,7 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
   }
 
 });
+*/
 
 document.addEventListener("DOMContentLoaded", async () => {
   // Block until session result is known
