@@ -42,6 +42,24 @@ function subscribeToMessages() {
   subscribed = true;
 }
 
+async function getCurrentUser() {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) {
+    console.error("Session fetch failed:", error);
+    return null;
+  }
+  return data.session?.user || null;
+}
+
+supabase.auth.onAuthStateChange((_event, session) => {
+  currentUser = session?.user || null;
+  if (currentUser) {
+    signedinUI();
+  } else {
+    signedoutUI();
+  }
+});
+
 supabase.auth.onAuthStateChange(async (_event, session) => {
   currentUser = session?.user || null;
 
@@ -62,6 +80,21 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
 });
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // Block until session result is known
+  currentUser = await getCurrentUser();
+
+  if (currentUser) {
+    await ensureUsername(currentUser);
+    loadMessages();
+    subscribeToMessages();
+    signedinUI();
+  } else {
+    signedoutUI();
+  }
+});
+
+/* OLD
+document.addEventListener("DOMContentLoaded", async () => {
   // restore session on first load
   const { data: { session } } = await supabase.auth.getSession();
   currentUser = session?.user || null;
@@ -77,6 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
  
 });
+*/
 
 async function add() {
   const content = textbox.value.trim();
@@ -148,6 +182,27 @@ function signedoutUI() {
   app.style.display = "none";
 }
 
+function loadingUI() {
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const app = document.getElementById("portal");
+
+  loginBtn.style.display = "none";
+  logoutBtn.style.display = "none";
+  app.style.display = "none";
+}
+
+async function cleanupOldMessages() {
+  const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+  
+  const { error } = await supabase
+    .from("messages")
+    .delete()
+    .lt("created_at", twelveHoursAgo);
+
+  if (error) console.error("Cleanup error:", error);
+  else console.log("Old messages cleaned up!");
+}
 
 textbox.addEventListener("keypress", e => {
   if (e.key === "Enter") add();
@@ -155,21 +210,3 @@ textbox.addEventListener("keypress", e => {
 button.addEventListener("click", add);
 
 cleanupOldMessages();
-
-/*
-function updateUI() {
-  const loginBtn = document.getElementById("login");
-  const logoutBtn = document.getElementById("logout");
-  const app = document.getElementById("portal");
-
-  if (currentUser) {
-    loginBtn.style.display = "none";
-    logoutBtn.style.display = "inline-block";
-    app.style.display = "block";
-  } else {
-    loginBtn.style.display = "inline-block";   
-    logoutBtn.style.display = "none";
-    app.style.display = "none";                
-  }
-}
-*/

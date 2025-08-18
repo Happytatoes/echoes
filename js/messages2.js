@@ -253,3 +253,22 @@ textbox.addEventListener("keypress", e => {
   if (e.key === "Enter") add();
 });
 button.addEventListener("click", add);
+
+
+/*
+function updateUI() {
+  const loginBtn = document.getElementById("login");
+  const logoutBtn = document.getElementById("logout");
+  const app = document.getElementById("portal");
+
+  if (currentUser) {
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+    app.style.display = "block";
+  } else {
+    loginBtn.style.display = "inline-block";   
+    logoutBtn.style.display = "none";
+    app.style.display = "none";                
+  }
+}
+*/
