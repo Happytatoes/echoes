@@ -68,11 +68,11 @@ supabase.auth.onAuthStateChange((_event, session) => {
 document.addEventListener("DOMContentLoaded", async () => {
   // Block until session result is known
   currentUser = await getCurrentUser();
-  await loadTotalCount();
 
   if (currentUser) {
     await ensureUsername(currentUser);
     loadMessages();
+    loadTotalCount();
     subscribeToMessages();
     signedinUI();
   } else {
