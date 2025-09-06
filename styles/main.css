@@ -35,6 +35,19 @@ html, body {
     padding-top: 8px;
     font-size: 20px;
     letter-spacing: 0.2em;
+    padding-bottom: 10px;
+    font-weight: 300;
+}
+
+#subtitle-2 {
+    font-family: Helvetica;
+    font-style: italic;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    padding-top: 8px;
+    font-size: 20px;
+    letter-spacing: 0.2em;
     padding-bottom: 60px;
     font-weight: 300;
 }

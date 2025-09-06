@@ -65,10 +65,10 @@ supabase.auth.onAuthStateChange((_event, session) => {
   }
 });
 
-
 document.addEventListener("DOMContentLoaded", async () => {
   // Block until session result is known
   currentUser = await getCurrentUser();
+  await loadTotalCount();
 
   if (currentUser) {
     await ensureUsername(currentUser);
@@ -100,6 +100,7 @@ async function add() {
 
   if (error) console.error("Insert failed:", error);
   textbox.value = "";
+  await loadTotalCount();
 }
 
 async function loadMessages() {
@@ -118,6 +119,22 @@ async function loadMessages() {
   }
 
   data.forEach(displayMessage);
+}
+
+async function loadTotalCount() {
+  const { data, error } = await supabase
+    .from("stats")
+    .select("total_messages")
+    .eq("id", 1)
+    .single();
+
+  if (error) {
+    console.error("Failed to load total:", error);
+    return;
+  }
+
+  document.getElementById("totalCounter").textContent =
+    `Total messages sent: ${data.total_messages}`;
 }
 
 function displayMessage(msg) {

@@ -2,7 +2,7 @@
 
 Write something beautiful. Let it drift away.
 
-A minimalist anonymous message board with ephemeral posts and gentle constraints. Built with vanilla JS and Supabase.
+A minimalist message board with ephemeral posts and gentle constraints. Built with vanilla JS and Supabase.
 
 ---
 
@@ -10,10 +10,8 @@ A minimalist anonymous message board with ephemeral posts and gentle constraints
 
 - Google-authenticated users
 - Post short messages (5–50 characters)
-- Each user gets 50 messages per day
 - Messages auto-delete after 12 hours
-- Hate speech filter
-- Total site messages + visits tracking 
+- Total site messages tracking 
 
 ---
 
@@ -55,12 +53,6 @@ A minimalist anonymous message board with ephemeral posts and gentle constraints
 	Push to GitHub
 	Go to vercel.com, connect your repo
 	Add your site URL to Supabase's Redirect URLs
-
-## In Progress
- Rate-limit by user (50/day)
- Display total message + visit count
- Add hate speech filter
- Responsive design polish
 
 ## Philosophy
 Ephemeral, anonymous-ish expression. Not for hate. Not for clout. Just passing thoughts in the wind.
