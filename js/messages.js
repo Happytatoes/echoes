@@ -133,7 +133,7 @@ async function loadTotalCount() {
     return;
   }
 
-  document.getElementById("totalCounter").textContent =
+  document.getElementById("subtitle-2").textContent =
     `Total messages sent: ${data.total_messages}`;
 }
 
