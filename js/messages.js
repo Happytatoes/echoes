@@ -202,6 +202,14 @@ async function cleanupOldMessages() {
   //else console.log("Old messages cleaned up!");
 }
 
+document.getElementById("login").addEventListener("click", () => {
+  supabase.auth.signInWithOAuth({ provider: "google" });
+});
+
+document.getElementById("logout").addEventListener("click", () => {
+  supabase.auth.signOut();
+});
+
 textbox.addEventListener("keypress", e => {
   if (e.key === "Enter") add();
 });
