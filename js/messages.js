@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-/* UNMODERATED ADD
+// UNMODERATED ADD
 async function add() {
   const content = textbox.value.trim();
   if (content.length < 5 || content.length > 50) {
@@ -114,7 +114,9 @@ async function add() {
   textbox.value = "";
   await loadTotalCount();
 }
-*/
+//
+
+/*
 
 async function add() {
   const content = textbox.value.trim();
@@ -154,7 +156,7 @@ async function add() {
   textbox.value = "";
   await loadTotalCount();
 }
-
+*/
 async function loadMessages() {
   container.innerHTML = "";
   const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
