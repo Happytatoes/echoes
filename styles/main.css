@@ -15,6 +15,10 @@ html, body {
 	height: 1200px;
 }
 
+#underline {
+    color: white;
+}
+
 #title {
     font-family: "Segoe UI", "Helvetica Neue", sans-serif;
     color: white;
@@ -48,8 +52,23 @@ html, body {
     padding-top: 8px;
     font-size: 20px;
     letter-spacing: 0.2em;
+    padding-bottom: 8px;
+    font-weight: 300;
+}
+
+#subtitle-3 {
+    font-family: Helvetica;
+    font-style: italic;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    padding-top: 8px;
+    font-size: 12px;
+    letter-spacing: 0.2em;
     padding-bottom: 60px;
     font-weight: 300;
+    max-width: 800px; 
+    margin: auto;
 }
 
 .message {

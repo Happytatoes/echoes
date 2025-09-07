@@ -15,8 +15,20 @@ async function ensureUsername(user) {
     .eq("id", user.id)
     .single();
 
-  if (!userRow) {
-    const username = prompt("Pick a username:") || "user";
+   if (!userRow) {
+    let username = "";
+
+    // keep prompting until they pick something valid
+    while (true) {
+      username = prompt("Pick a username (5-20 characters):") || "";
+
+      if (username.length >= 5 && username.length <= 20) {
+        break;
+      } else {
+        alert("Username must be between 5 and 20 characters. Try again.");
+      }
+    }
+
     const { error } = await supabase.from("users").insert({
       id: user.id,
       username,
@@ -80,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-
+/* UNMODERATED ADD
 async function add() {
   const content = textbox.value.trim();
   if (content.length < 5 || content.length > 50) {
@@ -99,6 +111,46 @@ async function add() {
   });
 
   if (error) console.error("Insert failed:", error);
+  textbox.value = "";
+  await loadTotalCount();
+}
+*/
+
+async function add() {
+  const content = textbox.value.trim();
+  if (content.length < 5 || content.length > 50) {
+    alert("Message must be between 5 and 50 characters.");
+    return;
+  }
+  if (!currentUser) {
+    alert("Please sign in.");
+    return;
+  }
+
+  const { data: { session } } = await supabase.auth.getSession();
+
+  const res = await fetch(
+    `${supabaseUrl}/functions/v1/moderated-insert`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        content,
+        username: currentUser.user_metadata?.custom_username || "anon-user",
+      }),
+    }
+  );
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    alert(result.error || "Failed to send message.");
+    return;
+  }
+
   textbox.value = "";
   await loadTotalCount();
 }
