@@ -108,17 +108,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// UNMODERATED ADD
 async function add() {
   const content = textbox.value.trim();
   if (content.length < 5 || content.length > 50) {
     alert("Message must be between 5 and 50 characters.");
     return;
   }
-  //if (containsBannedWord(content)) {
-    //alert("Message contains inappropriate language.");
-    //return;
-  //}
+  if (containsBannedWord1(content) || containsBannedWord2(content)) {
+    alert("Message contains inappropriate language.");
+    return;
+  }
   if (!currentUser) {
     alert("Please sign in.");
     return;
