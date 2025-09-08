@@ -123,10 +123,16 @@ async function add() {
 	return;
   }
 
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !session?.user) {
+    alert("Please sign in.");
+    return;
+  }
+
   const { error } = await supabase.from("messages").insert({
 	content,
 	user_id: currentUser.id,
-	username: currentUser.user_metadata?.custom_username || "anon-user"
+	username: currentUser.user_metadata?.custom_username || "lovely user"
   });
 
   if (error) console.error("Insert failed:", error);
