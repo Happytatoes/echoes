@@ -1,42 +1,52 @@
-
-export function containsBannedWord(text) {
+export function containsBannedWord1(text) {
   const lower = text.toLowerCase();
 
-  return bannedWords.some(word => {
+  return bannedWords1.some(word => {
     const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`\\b${escaped}\\b`, 'i'); // strict word boundaries
+    const regex = new RegExp(escaped, 'i'); // no \b -> matches inside words too
     return regex.test(lower);
   });
 }
 
-/*
-export function checkBannedWords(text) {
-  const lower = text.toLowerCase().trim();
-  const hardMatches = bannedWords1.filter(word => lower.includes(word));
-  const words = lower.split(/\W+/);
-  const softMatches = bannedWords2.filter(word => words.includes(word));
-  return { hard: hardMatches, soft: softMatches };
+// Soft ban: word must match as a whole word (strict word boundaries)
+export function containsBannedWord2(text) {
+  const lower = text.toLowerCase();
+
+  return bannedWords2.some(word => {
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`\\b${escaped}\\b`, 'i'); // \b keeps it strict
+    return regex.test(lower);
+  });
 }
-*/
 
 export const bannedWords1 = [
-"africoon",
-"beaner",
-"beaners",
-"chink",
-"ching chong",  
-"faggot",
-"fuck",
-"shit",
-"nigga",
-"nigger",
-"gook",
-"kike",
-"dyke",
-"tranny"
+  "africoon",
+  "beaner",
+  "ching chong",  
+  "faggot",
+  "fuck",
+  "shit",
+  "nigga",
+  "nigger",
+  "kike",
+  "dyke",
+  "tranny"
 ];
 
 export const bannedWords2 = [
+  "africoon",
+  "beaner",
+  "ching chong",  
+  "faggot",
+  "fuck",
+  "shit",
+  "nigga",
+  "nigger",
+  "kike",
+  "dyke",
+  "tranny",
+  "chink",
+  "gook",
   "2 girls 1 cup",
   "2g1c",
   "4r5e",

@@ -1,5 +1,6 @@
 import { supabase } from './supabaseClient.js';
-import { containsBannedWord } from './moderation.js';
+import { containsBannedWord1 } from './moderation.js';
+import { containsBannedWord2 } from './moderation.js';
 
 let currentUser = null;
 let subscribed = false;
@@ -19,7 +20,6 @@ async function ensureUsername(user) {
    if (!userRow) {
     let username = "";
 
-    // keep prompting until they pick something valid
     while (true) {
       username = prompt("Pick a username (5-20 characters):") || "";
 
@@ -28,7 +28,7 @@ async function ensureUsername(user) {
       } else {
         alert("Username must be between 5 and 20 characters. Try again.");
       }
-      if (containsBannedWord(username)) {
+     if (containsBannedWord1(username) || containsBannedWord2(username)) {
         alert("Username contains inappropriate language. Try again.");
         continue;
       }
