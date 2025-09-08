@@ -1,4 +1,4 @@
-/*
+
 export function containsBannedWord(text) {
   const lower = text.toLowerCase();
 
@@ -8,8 +8,8 @@ export function containsBannedWord(text) {
     return regex.test(lower);
   });
 }
-*/
 
+/*
 export function checkBannedWords(text) {
   const lower = text.toLowerCase().trim();
   const hardMatches = bannedWords1.filter(word => lower.includes(word));
@@ -17,6 +17,7 @@ export function checkBannedWords(text) {
   const softMatches = bannedWords2.filter(word => words.includes(word));
   return { hard: hardMatches, soft: softMatches };
 }
+*/
 
 export const bannedWords1 = [
 "africoon",
