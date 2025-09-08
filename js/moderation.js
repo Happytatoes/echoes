@@ -3,7 +3,7 @@ export function containsBannedWord(text) {
 
   return bannedWords.some(word => {
     const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(^|\\W)${escaped}(\\W|$)`, 'i');
+    const regex = new RegExp(`\\b${escaped}\\b`, 'i'); // strict word boundaries
     return regex.test(lower);
   });
 }
