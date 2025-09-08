@@ -23,17 +23,26 @@ async function ensureUsername(user) {
     while (true) {
       username = prompt("Pick a username (5-20 characters):") || "";
 
-      if (username.length >= 5 && username.length <= 20) {
-        break;
-      } else {
-        alert("Username must be between 5 and 20 characters. Try again.");
+      // allow the user to cancel the prompt (optional behavior)
+      if (!username) {
+        alert("You must pick a username to continue.");
+        continue;
       }
-     if (!containsBannedWord1(username) && !containsBannedWord2(username)) {
-       break;
-      } else {  
+
+      // length check
+      if (username.length < 5 || username.length > 20) {
+        alert("Username must be between 5 and 20 characters. Try again.");
+        continue;
+      }
+
+      // banned-word checks (assumes these functions are imported/defined)
+      if (containsBannedWord1(username) || containsBannedWord2(username)) {
         alert("Username contains inappropriate language. Try again.");
         continue;
       }
+
+      // passed all checks
+      break;
     }
 
     const { error } = await supabase.from("users").insert({
