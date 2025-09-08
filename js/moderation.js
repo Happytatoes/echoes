@@ -1,6 +1,11 @@
 export function containsBannedWord(text) {
   const lower = text.toLowerCase();
-  return bannedWords.some(word => lower.includes(word));
+
+  return bannedWords.some(word => {
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(^|\\W)${escaped}(\\W|$)`, 'i');
+    return regex.test(lower);
+  });
 }
 
 export const bannedWords = [
@@ -46,7 +51,6 @@ export const bannedWords = [
   "arschloch",
   "arse",
   "arsehole",
-  "aryan",
   "ash0le",
   "ash0les",
   "asholes",
@@ -217,16 +221,12 @@ export const bannedWords = [
   "bitchslap",
   "bitchtit",
   "bitchy",
-  "biteme",
   "bitties",
   "black cock",
   "blackcock",
-  "blackman",
-  "blacks",
   "blonde action",
   "blonde on blonde action",
   "blonde on blonde",
-  "bloodclaat",
   "blow j",
   "blow job",
   "blow your l",
@@ -234,8 +234,6 @@ export const bannedWords = [
   "blowjob",
   "blowjobs",
   "blue waffle",
-  "bluegum",
-  "bluegums",
   "blumpkin",
   "bo ob",
   "bo obs",
@@ -262,8 +260,6 @@ export const bannedWords = [
   "boonga",
   "boongas",
   "boongs",
-  "boonie",
-  "boonies",
   "booobs",
   "boooobs",
   "booooobs",
@@ -292,12 +288,10 @@ export const bannedWords = [
   "buddhahead",
   "buddhaheads",
   "buffies",
-  "bugger",
   "buggered",
   "buggery",
   "bukake",
   "bukkake",
-  "bullcrap",
   "bulldike",
   "bulldyke",
   "bullet vibe",
@@ -397,9 +391,6 @@ export const bannedWords = [
   "chocolate rosebuds",
   "chode",
   "chodes",
-  "chonkies",
-  "chonky",
-  "chonkys",
   "chraa",
   "christ killer",
   "christ killers",
@@ -480,14 +471,12 @@ export const bannedWords = [
   "cocksuka",
   "cocksukka",
   "cocktease",
-  "cocky",
   "cohee",
   "coital",
   "coitus",
   "cok",
   "cokmuncher",
   "coksucka",
-  "condom",
   "coochie",
   "coochy",
   "coolie",
@@ -701,7 +690,6 @@ export const bannedWords = [
   "dominatrics",
   "dominatrix",
   "dommes",
-  "dong",
   "donkey punch",
   "donkeypunch",
   "donkeyribber",
@@ -2487,8 +2475,6 @@ export const bannedWords = [
   "teets",
   "teez",
   "terd",
-  "teste",
-  "testee",
   "testes",
   "testical",
   "testicle",
