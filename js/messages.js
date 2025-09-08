@@ -28,7 +28,9 @@ async function ensureUsername(user) {
       } else {
         alert("Username must be between 5 and 20 characters. Try again.");
       }
-     if (containsBannedWord1(username) || containsBannedWord2(username)) {
+     if (!containsBannedWord1(username) && !containsBannedWord2(username)) {
+       break;
+      } else {  
         alert("Username contains inappropriate language. Try again.");
         continue;
       }
