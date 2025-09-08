@@ -1,3 +1,4 @@
+/*
 export function containsBannedWord(text) {
   const lower = text.toLowerCase();
 
@@ -7,8 +8,34 @@ export function containsBannedWord(text) {
     return regex.test(lower);
   });
 }
+*/
 
-export const bannedWords = [
+export function checkBannedWords(text) {
+  const lower = text.toLowerCase().trim();
+  const hardMatches = bannedWords1.filter(word => lower.includes(word));
+  const words = lower.split(/\W+/);
+  const softMatches = bannedWords2.filter(word => words.includes(word));
+  return { hard: hardMatches, soft: softMatches };
+}
+
+export const bannedWords1 = [
+"africoon",
+"beaner",
+"beaners",
+"chink",
+"ching chong",  
+"faggot",
+"fuck",
+"shit",
+"nigga",
+"nigger",
+"gook",
+"kike",
+"dyke",
+"tranny"
+];
+
+export const bannedWords2 = [
   "2 girls 1 cup",
   "2g1c",
   "4r5e",
@@ -24,7 +51,6 @@ export const bannedWords = [
   "abbo",
   "abeed",
   "acrotomophilia",
-  "africoon",
   "ahole",
   "alabama hot pocket",
   "alaskan pipeline",
@@ -173,8 +199,6 @@ export const bannedWords = [
   "bazooms",
   "bbw",
   "bdsm",
-  "beaner",
-  "beaners",
   "beaney",
   "beaneys",
   "beardedclam",
@@ -379,12 +403,10 @@ export const bannedWords = [
   "chinaswedes",
   "chinc",
   "chincs",
-  "ching chong",
   "ching chongs",
   "chinga",
   "chingchong",
   "chingchongs",
-  "chink",
   "chinks",
   "chinky",
   "choad",
@@ -792,7 +814,6 @@ export const bannedWords = [
   "fagging",
   "faggit",
   "faggitt",
-  "faggot",
   "faggotcock",
   "faggs",
   "fagit",
