@@ -11,8 +11,8 @@ html, body {
 }
 
 #background {
-    background-image: linear-gradient(to top, rgb(142, 236, 255), rgb(0, 64, 136));
-	height: 1200px;
+  background-image: linear-gradient(to top, rgb(142, 236, 255), rgb(0, 64, 136));
+	height: 1300px;
 }
 
 #underline {
@@ -63,7 +63,7 @@ html, body {
     text-align: center;
     padding: 20px;
     padding-top: 8px;
-    font-size: 12px;
+    font-size: 14px;
     letter-spacing: 0.2em;
     padding-bottom: 60px;
     font-weight: 300;

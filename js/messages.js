@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient.js';
+import { containsBannedWord } from './moderation.js';
 
 let currentUser = null;
 let subscribed = false;
@@ -26,6 +27,10 @@ async function ensureUsername(user) {
         break;
       } else {
         alert("Username must be between 5 and 20 characters. Try again.");
+      }
+      if (containsBannedWord(username)) {
+        alert("Username contains inappropriate language. Try again.");
+        continue;
       }
     }
 
@@ -97,6 +102,10 @@ async function add() {
   const content = textbox.value.trim();
   if (content.length < 5 || content.length > 50) {
     alert("Message must be between 5 and 50 characters.");
+    return;
+  }
+  if (containsBannedWord(content)) {
+    alert("Message contains inappropriate language.");
     return;
   }
   if (!currentUser) {
