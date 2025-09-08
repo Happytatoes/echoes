@@ -104,10 +104,10 @@ async function add() {
     alert("Message must be between 5 and 50 characters.");
     return;
   }
-  if (containsBannedWord(content)) {
-    alert("Message contains inappropriate language.");
-    return;
-  }
+  //if (containsBannedWord(content)) {
+    //alert("Message contains inappropriate language.");
+    //return;
+  //}
   if (!currentUser) {
     alert("Please sign in.");
     return;
