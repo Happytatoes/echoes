@@ -9,8 +9,8 @@ A minimalist message board with ephemeral posts and gentle constraints. Built wi
 ## Features
 
 - Google-authenticated users
-- Post short messages (5–50 characters)
-- Messages auto-delete after 12 hours
+- Post short messages (<200 characters)
+- Only the most recent 1000 messages stay
 - Total site messages tracking 
 
 ---
