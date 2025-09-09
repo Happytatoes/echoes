@@ -109,20 +109,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function add() {
- 
-  
   const content = textbox.value.trim();
   if (content.length < 5 || content.length > 50) {
-    alert("Message must be between 5 and 50 characters.");
-    return;
+	alert("Message must be between 5 and 50 characters.");
+	return;
   }
   if (containsBannedWord1(content) || containsBannedWord2(content)) {
-    alert("Message contains inappropriate language.");
-    return;
+	alert("Message contains inappropriate language.");
+	return;
   }
   if (!currentUser) {
-    alert("Please sign in.");
-    return;
+	alert("Please sign in.");
+	return;
   }
 
   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -130,6 +128,12 @@ async function add() {
     alert("Please sign in.");
     return;
   }
+
+  const { error } = await supabase.from("messages").insert({
+	content,
+	user_id: currentUser.id,
+	username: currentUser.user_metadata?.custom_username || "lovely user"
+  });
 
   if (error) console.error("Insert failed:", error);
   textbox.value = "";
@@ -220,6 +224,7 @@ async function cleanupOldMessages() {
 	.lt("created_at", twelveHoursAgo);
 
   if (error) console.error("Cleanup error:", error);
+  //else console.log("Old messages cleaned up!");
 }
 
 document.getElementById("login").addEventListener("click", () => {
