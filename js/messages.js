@@ -144,17 +144,17 @@ async function add() {
 
 async function loadMessages() {
   container.innerHTML = "";
-  const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
+  //const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
 
   const { data, error } = await supabase
 	.from("messages")
 	.select("*")
-	.gte("created_at", twelveHoursAgo)
+	//.gte("created_at", twelveHoursAgo)
 	.order("created_at", { ascending: true });
 
   if (error) {
-	console.error("Load error:", error);
-	return;
+    console.error("Load error:", error);
+    return;
   }
 
   data.forEach(displayMessage);
@@ -217,6 +217,7 @@ function loadingUI() {
   app.style.display = "none";
 }
 
+/*
 async function cleanupOldMessages() {
   const twelveHoursAgo = new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString();
   
@@ -228,6 +229,7 @@ async function cleanupOldMessages() {
   if (error) console.error("Cleanup error:", error);
   //else console.log("Old messages cleaned up!");
 }
+*/
 
 document.getElementById("login").addEventListener("click", () => {
   supabase.auth.signInWithOAuth({ provider: "google" });
@@ -242,4 +244,4 @@ textbox.addEventListener("keypress", e => {
 });
 button.addEventListener("click", add);
 
-cleanupOldMessages();
+//cleanupOldMessages();
