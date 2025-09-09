@@ -2,9 +2,6 @@ import { supabase } from './supabaseClient.js';
 import { containsBannedWord1 } from './moderation.js';
 import { containsBannedWord2 } from './moderation.js';
 
-// DEBUGLOG
-console.log("messages.js loaded. Supabase client present?", !!supabase);
-
 let currentUser = null;
 let subscribed = false;
 let channel = null;
@@ -112,61 +109,27 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function add() {
-  //DEBUGLOG
-  console.log("add() called");
+ 
+  
   const content = textbox.value.trim();
   if (content.length < 5 || content.length > 50) {
-	alert("Message must be between 5 and 50 characters.");
-	return;
+    alert("Message must be between 5 and 50 characters.");
+    return;
   }
   if (containsBannedWord1(content) || containsBannedWord2(content)) {
-	alert("Message contains inappropriate language.");
-	return;
+    alert("Message contains inappropriate language.");
+    return;
   }
   if (!currentUser) {
-	alert("Please sign in.");
-	return;
+    alert("Please sign in.");
+    return;
   }
 
-  //START DEBUGLOG
-  // 🔍 Diagnostic: fetch the session right now
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  console.log("getSession result:", { sessionData, sessionError });
-
-  const session = sessionData?.session || null;
-  if (!session || !session.user) {
-    // extra attempt: try to get user directly (some versions)
-    const { data: userData, error: userErr } = await supabase.auth.getUser();
-    console.log("getUser fallback:", { userData, userErr });
-
-    if (!userData?.user) {
-      alert("Please sign in (session not available).");
-      return;
-    } else {
-      // set user from getUser()
-      currentUser = userData.user;
-    }
-  } else {
-    currentUser = session.user;
-  }
-
-  console.log("Using currentUser for insert:", currentUser?.id);
-  //END DEBUGLOG
-
-  //old code here
-  /*
   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
   if (sessionError || !session?.user) {
     alert("Please sign in.");
     return;
   }
-*/ 
-
-  const { error } = await supabase.from("messages").insert({
-    content,
-    user_id: currentUser.id,
-    username: currentUser.user_metadata?.custom_username || "anon-user"
-  });
 
   if (error) console.error("Insert failed:", error);
   textbox.value = "";
@@ -257,7 +220,6 @@ async function cleanupOldMessages() {
 	.lt("created_at", twelveHoursAgo);
 
   if (error) console.error("Cleanup error:", error);
-  //else console.log("Old messages cleaned up!");
 }
 
 document.getElementById("login").addEventListener("click", () => {
