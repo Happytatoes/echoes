@@ -112,8 +112,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function add() {
   const content = textbox.value.trim();
-  if (content.length < 5 || content.length > 50) {
-    alert("Message must be between 5 and 50 characters.");
+  if (content.length > 200) {
+    alert("Message limit is 200 characters");
     return;
   }
   if (containsBannedWord1(content) || containsBannedWord2(content)) {
