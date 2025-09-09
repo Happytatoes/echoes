@@ -3,6 +3,7 @@ import { containsBannedWord1 } from './moderation.js';
 import { containsBannedWord2 } from './moderation.js';
 
 let currentUser = null;
+let currentUsername = null;
 let subscribed = false;
 let channel = null;
 
@@ -50,10 +51,11 @@ async function ensureUsername(user) {
 	  username,
 	});
 	if (error) console.error("Insert user failed:", error);
-
-	currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: username };
+    currentUsername = username;
+	  currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: username };
   } else {
-	currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: userRow.username };
+    currentUsername = userRow.username;
+	  currentUser.user_metadata = { ...currentUser.user_metadata, custom_username: userRow.username };
   }
 }
 
@@ -111,16 +113,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function add() {
   const content = textbox.value.trim();
   if (content.length < 5 || content.length > 50) {
-	alert("Message must be between 5 and 50 characters.");
-	return;
+    alert("Message must be between 5 and 50 characters.");
+    return;
   }
   if (containsBannedWord1(content) || containsBannedWord2(content)) {
-	alert("Message contains inappropriate language.");
-	return;
+    alert("Message contains inappropriate language.");
+    return;
   }
   if (!currentUser) {
-	alert("Please sign in.");
-	return;
+    alert("Please sign in.");
+    return;
   }
 
   const { data: { session }, error: sessionError } = await supabase.auth.getSession();
@@ -130,9 +132,9 @@ async function add() {
   }
 
   const { error } = await supabase.from("messages").insert({
-	content,
-	user_id: currentUser.id,
-	username: currentUser.user_metadata?.custom_username || "lovely user"
+    content,
+    user_id: currentUser.id,
+    username: currentUsername || "lovely user"
   });
 
   if (error) console.error("Insert failed:", error);
@@ -239,14 +241,5 @@ textbox.addEventListener("keypress", e => {
   if (e.key === "Enter") add();
 });
 button.addEventListener("click", add);
-
-window.addEventListener("focus", async () => {
-  const { data: { session }, error } = await supabase.auth.getSession();
-  if (error) {
-    console.error("Session fetch failed on tab focus:", error);
-    return;
-  }
-  currentUser = session?.user || null;
-});
 
 cleanupOldMessages();
