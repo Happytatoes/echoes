@@ -10,7 +10,7 @@ A minimalist message board with ephemeral posts and gentle constraints. Built wi
 
 - Google-authenticated users
 - Post short messages (<200 characters)
-- Only the most recent 1000 messages stay
+- Only the most recent messages stay
 - Total site messages tracking 
 
 ---
