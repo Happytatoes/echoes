@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Echoes - Archived Demo</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Archived snapshot of Echoes - a fleeting message board from September 2024">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./archive-styles.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+    <main id="background">
+    
+    <!-- Archive banner -->
+    <div id="archive-banner">
+        <strong>Archived Demo</strong> — Read-only snapshot from September 2024 with 1,200+ real messages
+    </div>
+
+    <h1 id="title">ECHOES</h1>
+    <h2 id="subtitle">Write something beautiful. Let it drift away.</h2>
+    <h2 id="subtitle-2" id="message-count">Total messages sent: loading...</h2>
+    <h3 id="subtitle-3">
+        Echoes is a fleeting message board where every thought quietly disappears. Only the most recent messages remain visible. 
+        It was built by <a href="https://www.linkedin.com/in/noah-wong-atx/" target="_blank"> <u id="underline">a UT student</u></a> 
+        to capture little sparks of creativity, kindness, or curiosity — a space that's light, temporary, and human, 
+        with a built-in filter to keep conversations respectful.
+    </h3>
+
+    <div id="portal"> 
+        <div id="viewport">
+            <div class="loading-message">Loading archived messages...</div>
+        </div>
+        
+        <!-- Disabled input area -->
+        <div id="textport" class="disabled">
+            <input id="textbox" type="text" placeholder="Archive mode - messages are read-only" disabled>
+            <button id="sendbutton" disabled>➤</button>
+        </div>
+    </div>
+
+    <div id="archive-footer">
+        Archived on <span id="archive-date"></span> • 
+        <a href="https://github.com/Happytatoes/echoes" target="_blank">View Source</a>
+    </div>
+
+    </main>
+    <script src="./archive-app.js"></script>
+</body>
+
+</html>
